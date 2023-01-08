@@ -71,6 +71,28 @@ in one go (since the first command will disable your Apple keyboard). Alternativ
 
 The advantage of DKMS is that the module is automatically re-built after every kernel upgrade and installation. This method has been tested at least on Ubuntu 14.04 and 16.04.
 
+#### Removing old versions
+
+If you find a different/default hid-apple is being loaded instead (and the keyboard is defaulting to hid-generic),
+try deleting the old driver.
+
+You can check if the loaded driver is set to map to your device ID:
+
+`modinfo hid-apple | grep -i 029f`
+
+Delete the old driver:
+
+```bash
+sudo rm /lib/modules/5.4.0-136-generic/updates/dkms/hid-apple.ko
+sudo dkms uninstall hid-apple/1.0 --all
+sudo dkms remove hid-apple/1.0 --all
+```
+
+Check if it worked:
+
+`sudo modprobe hid-apple`
+
+
 ### Note about installation on Mint and some others distros
 DKMS config of this repo has option `DEST_MODULE_LOCATION` set to `/extra`. That's the place compiled patched module will be placed.
 Distributions like Ubuntu, Fedora, Suse and some others ignore this parameter and use the proper distribution-specific directory instead. There will be no issues with these distributions.
@@ -178,7 +200,6 @@ sudo depmod -a
 ```bash
 sudo update-initramfs -u
 ```
-
 
 ### Limitations
 
